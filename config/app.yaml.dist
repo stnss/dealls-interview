@@ -1,0 +1,43 @@
+app:
+  name: "${APP_NAME}"
+  port: ${APP_PORT}
+  debug: ${APP_DEBUG}
+  timezone: "${APP_TIMEZONE}"
+  env: "${APP_ENV}"
+  read_timeout: "${APP_READ_TIMEOUT_SECOND}"
+  write_timeout: "${APP_WRITE_TIMEOUT_SECOND}"
+
+log:
+  level: "${LOG_LEVEL}"
+
+db_write:
+  driver: "${DB_WRITE_DRIVER}"
+  host: "${DB_WRITE_HOST}"
+  port: ${DB_WRITE_PORT}
+  name: "${DB_WRITE_DBNAME}" # database name
+  user: "${DB_WRITE_USERNAME}" # database user
+  pass: "${DB_WRITE_PASSWORD}" # database password
+  max_open: ${DB_WRITE_MAXOPEN}
+  max_idle: ${DB_WRITE_MAXIDLE}
+  dial_timeout: "${DB_WRITE_DIAL_TIMEOUT}"
+  life_time: "${DB_WRITE_LIFETIME}"
+  read_timeout: "${DB_WRITE_READ_TIMEOUT}"
+  write_timeout: "${DB_WRITE_WRITE_TIMEOUT}"
+  charset: "${DB_WRITE_CHARSET}"
+  timezone: "${DB_WRITE_TIMEZONE}"
+
+db_read:
+  driver: "${DB_READ_DRIVER}"
+  host: "${DB_READ_HOST}"
+  port: ${DB_READ_PORT}
+  name: "${DB_READ_DBNAME}" # database name
+  user: "${DB_READ_USERNAME}" # database user
+  pass: "${DB_READ_PASSWORD}" # database password
+  max_open: ${DB_READ_MAXOPEN}
+  max_idle: ${DB_READ_MAXIDLE}
+  dial_timeout: "${DB_READ_DIAL_TIMEOUT}"
+  life_time: "${DB_READ_LIFETIME}"
+  read_timeout: "${DB_READ_READ_TIMEOUT}"
+  write_timeout: "${DB_READ_WRITE_TIMEOUT}"
+  charset: "${DB_READ_CHARSET}"
+  timezone: "${DB_READ_TIMEZONE}"

@@ -1,0 +1,7 @@
+kodingin-boilerplate
+.idea
+.DS_Store
+vendor
+.vscode/
+go.sum
+config/app.yaml
