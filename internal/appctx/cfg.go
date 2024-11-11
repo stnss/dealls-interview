@@ -32,6 +32,8 @@ type (
 		DBWrite *Database  `yaml:"db_write" json:"db_write"`
 		DBRead  *Database  `yaml:"db_read" json:"db_read"`
 		Redis   *RedisConf `yaml:"redis" json:"redis"`
+		RSAKey  RSA        `yaml:"rsa" json:"rsa"`
+		JWT     JWT        `yaml:"jwt" json:"jwt"`
 	}
 
 	App struct {
@@ -114,6 +116,17 @@ type (
 		// The sentinel master name.
 		// Only failover clients.
 		MasterName string `yaml:"master_name"`
+	}
+
+	RSA struct {
+		PrivateKey string `yaml:"private_key"`
+		PublicKey  string `yaml:"public_key"`
+	}
+
+	JWT struct {
+		AccessSecret  string        `yaml:"access_secret"`
+		RefreshSecret string        `yaml:"refresh_secret"`
+		ExpiredTime   time.Duration `yaml:"expired_time"`
 	}
 )
 

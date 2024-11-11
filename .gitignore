@@ -5,3 +5,4 @@ vendor
 .vscode/
 go.sum
 config/app.yaml
+.mockery.yaml
