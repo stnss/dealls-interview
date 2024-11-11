@@ -94,7 +94,7 @@ func (rtr *router) Route() {
 	dep := dependencies.NewDependency(rtr.cfg)
 	repo := repositories.NewRepository(dep)
 	provider := providers.NewProvider(rtr.cfg)
-	svcs := services.NewService(rtr.cfg, &services.Dependency{
+	svcs := services.NewService(rtr.cfg, dep, &services.Dependency{
 		Repository: repo,
 		Provider:   provider,
 	})
@@ -114,5 +114,22 @@ func (rtr *router) Route() {
 	rtr.fiber.Get("/ruok", rtr.handleRoute(
 		HttpRequest,
 		controllers.HealthCheck.Liveness,
+	))
+
+	external := rtr.fiber.Group("external")
+	exV1 := external.Group("v1")
+
+	rtr.AuthRoute(exV1, controllers)
+}
+
+func (rtr *router) AuthRoute(r fiber.Router, controllers *controller.Controller) {
+	r = r.Group("auth")
+	r.Post("login", rtr.handleRoute(
+		HttpRequest,
+		controllers.Authentication.Login,
+	))
+	r.Post("registration", rtr.handleRoute(
+		HttpRequest,
+		controllers.Authentication.Registration,
 	))
 }

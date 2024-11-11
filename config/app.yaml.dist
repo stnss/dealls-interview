@@ -41,3 +41,12 @@ db_read:
   write_timeout: "${DB_READ_WRITE_TIMEOUT}"
   charset: "${DB_READ_CHARSET}"
   timezone: "${DB_READ_TIMEZONE}"
+
+rsa:
+  public_key: "${RSA_PUBLIC_KEY}"
+  private_key: "${RSA_PRIVATE_KEY}"
+
+jwt:
+  access_secret: "${JWT_ACCESS_SECRET}"
+  refresh_secret: "${JWT_REFRESH_SECRET}"
+  expired_time: "${JWT_EXPIRED_TIME}"
