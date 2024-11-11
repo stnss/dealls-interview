@@ -17,7 +17,7 @@ import (
 	"testing"
 )
 
-func TestServe(t *testing.T) {
+func TestLogin_Serve(t *testing.T) {
 	testCases := []struct {
 		name            string
 		param           any
@@ -130,14 +130,12 @@ func TestServe(t *testing.T) {
 			app := fiber.New()
 			app.Post("/login", handler())
 
-			// Create a new request with the payload
 			payload, _ := json.Marshal(tc.param)
 			req := httptest.NewRequest("POST", "/login", bytes.NewBuffer(payload))
 			req.Header.Set("Content-Type", "application/json")
 			res, err := app.Test(req, -1)
 			assert.NoError(t, err)
 
-			// Perform assertions
 			assert.Equal(t, tc.expectedStatus, res.StatusCode)
 			var responseBody map[string]interface{}
 			err = json.NewDecoder(res.Body).Decode(&responseBody)

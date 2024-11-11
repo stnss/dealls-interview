@@ -128,4 +128,8 @@ func (rtr *router) AuthRoute(r fiber.Router, controllers *controller.Controller)
 		HttpRequest,
 		controllers.Authentication.Login,
 	))
+	r.Post("registration", rtr.handleRoute(
+		HttpRequest,
+		controllers.Authentication.Registration,
+	))
 }

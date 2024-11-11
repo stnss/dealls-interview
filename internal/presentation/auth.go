@@ -36,7 +36,7 @@ func (param *LoginRequest) Validate() error {
 func (param *RegistrationRequest) Validate() error {
 	return validation.ValidateStruct(
 		param,
-		validation.Field(&param.Name, validation.Required, is.Alpha),
+		validation.Field(&param.Name, validation.Required),
 		validation.Field(&param.Email, validation.Required, is.EmailFormat),
 		validation.Field(&param.Password, validation.Required, is.Base64),
 		validation.Field(&param.PasswordConfirmation, validation.Required, is.Base64),

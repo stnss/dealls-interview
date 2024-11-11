@@ -12,6 +12,7 @@ type Authentication struct {
 
 func NewAuthentication(svc *services.Services) *Authentication {
 	return &Authentication{
-		Login: newLoginController(svc.Auth),
+		Login:        newLoginController(svc.Auth),
+		Registration: newRegistrationController(svc.Auth),
 	}
 }

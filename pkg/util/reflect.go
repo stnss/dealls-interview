@@ -119,3 +119,107 @@ func timeIsZero(obj reflect.Value) bool {
 
 	return t2 == nil
 }
+
+func CopyStruct(src, dst any, tag string) error {
+	srcVal := reflect.ValueOf(src)
+	dstVal := reflect.ValueOf(dst)
+
+	// If src or dst is a pointer, get the underlying value.
+	if srcVal.Kind() == reflect.Ptr {
+		srcVal = srcVal.Elem()
+	}
+	if dstVal.Kind() == reflect.Ptr {
+		dstVal = dstVal.Elem()
+	}
+
+	// Ensure both src and dst are structs.
+	if srcVal.Kind() != reflect.Struct || dstVal.Kind() != reflect.Struct {
+		return fmt.Errorf("src and dst must be structs or pointers to structs")
+	}
+
+	// Map to store dst field by JSON tag for quick lookup
+	dstFieldMap := make(map[string]reflect.Value)
+
+	// Populate dstFieldMap with dst fields that have json tags.
+	for i := 0; i < dstVal.NumField(); i++ {
+		dstField := dstVal.Type().Field(i)
+		if jsonTag, ok := dstField.Tag.Lookup(tag); ok {
+			tagName := strings.Split(jsonTag, ",")[0] // Get the tag before any options like omitempty
+			if tagName != "-" {
+				dstFieldMap[tagName] = dstVal.Field(i)
+			}
+		}
+	}
+
+	// Iterate over src fields and copy to dst where tags match.
+	for i := 0; i < srcVal.NumField(); i++ {
+		srcField := srcVal.Type().Field(i)
+		srcFieldValue := srcVal.Field(i)
+
+		// Skip unexported fields (fields that start with lowercase letters)
+		if !srcFieldValue.CanInterface() {
+			continue
+		}
+
+		// Check if the field has a JSON tag and is not "-"
+		if jsonTag, ok := srcField.Tag.Lookup(tag); ok {
+			tagName := strings.Split(jsonTag, ",")[0]
+			omitempty := strings.Contains(jsonTag, "omitempty")
+
+			// Check for zero value and omitempty tag
+			if omitempty && isZeroValue(srcFieldValue) {
+				continue // Skip this field if it's zero and has omitempty tag
+			}
+
+			// If there's a corresponding field in dst, set its value.
+			if dstField, exists := dstFieldMap[tagName]; exists && dstField.CanSet() {
+				if srcFieldValue.Kind() == reflect.Ptr && !srcFieldValue.IsNil() {
+					// Dereference the pointer
+					srcFieldValue = srcFieldValue.Elem()
+				}
+
+				// Handle pointer types by ensuring compatibility between source and destination
+				if srcFieldValue.Type().AssignableTo(dstField.Type()) {
+					dstField.Set(srcFieldValue)
+				} else if srcFieldValue.Kind() == reflect.Ptr && dstField.Kind() == reflect.Ptr {
+					if !srcFieldValue.IsNil() && dstField.CanSet() {
+						dstField.Set(srcFieldValue)
+					}
+				} else if dstField.Kind() == reflect.Ptr && dstField.IsNil() {
+					if srcFieldValue.CanAddr() {
+						dstField.Set(srcFieldValue.Addr())
+					}
+				}
+			}
+		}
+	}
+	return nil
+}
+
+// isZeroValue checks if a value is the zero value for its type.
+func isZeroValue(v reflect.Value) bool {
+	if !v.IsValid() {
+		return true
+	}
+
+	if v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		return v.IsNil()
+	}
+
+	switch v.Kind() {
+	case reflect.String, reflect.Slice, reflect.Map, reflect.Array, reflect.Chan:
+		return v.Len() == 0
+	case reflect.Bool:
+		return !v.Bool()
+	case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64:
+		return v.Int() == 0
+	case reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
+		return v.Uint() == 0
+	case reflect.Float32, reflect.Float64:
+		return v.Float() == 0
+	case reflect.Struct:
+		return reflect.DeepEqual(v.Interface(), reflect.Zero(v.Type()).Interface())
+	default:
+		return false
+	}
+}

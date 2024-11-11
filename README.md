@@ -35,6 +35,20 @@ make test
 make test-cover
 ```
 
+5. Copy `app.yaml.dist` and paste as `app.yaml` on config directory
+
+6. Config all env based on your detail
+
+7. Running Migration
+```bash
+go run . db:migrate up
+```
+
+7. Running App
+```bash
+make start
+```
+
 ## Usage
 To create commands using Cobra, define your command structures and logic in the cmd directory. Use the main.go file to initialize and run your CLI application.
 
